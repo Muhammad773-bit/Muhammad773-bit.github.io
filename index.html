@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muhammad Ali Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Muhammad Ali, AI developer and BS Artificial Intelligence student at SMIU Karachi. RAG systems, document AI, LLM agents and FastAPI backends.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header; hero = headline left, 3D tilting portrait right over a live "embedding space" canvas; stack strip; ask-my-portfolio retriever; work grid of tilt cards; timeline; toolkit; contact. Palette from Sindhi ajrak: indigo ground, madder red accent. */
+:root{
+  --bg:#f4f5fa; --bg2:#eceef7; --surface:#ffffff; --ink:#131833; --muted:#575e7c; --line:#d9ddea;
+  --indigo:#2a3590; --madder:#b8322a; --madder-soft:#f7e3e0; --hl:#ffefb8; --glow:rgba(42,53,144,.16); --shadow:rgba(19,24,51,.22);
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c0f22; --bg2:#11152c; --surface:#151a34; --ink:#e9ebf7; --muted:#a3a9c8; --line:#283056;
+  --indigo:#a4aeff; --madder:#ff7d6e; --madder-soft:#3b1f23; --hl:#4d3f10; --glow:rgba(120,135,255,.18); --shadow:rgba(0,0,0,.55); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c0f22; --bg2:#11152c; --surface:#151a34; --ink:#e9ebf7; --muted:#a3a9c8; --line:#283056;
+  --indigo:#a4aeff; --madder:#ff7d6e; --madder-soft:#3b1f23; --hl:#4d3f10; --glow:rgba(120,135,255,.18); --shadow:rgba(0,0,0,.55); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg); color:var(--ink); font:16px/1.6 var(--body); margin:0; overflow-x:hidden}
+.wrap{max-width:1120px; margin:0 auto; padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px))}
+a{color:var(--indigo); text-underline-offset:3px}
+a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--madder); outline-offset:3px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0}
+.label{font:500 12px/1.4 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+
+/* ajrak band: repeating star lattice */
+.band{height:12px; background:
+  radial-gradient(circle at 6px 6px, var(--madder) 0 2px, transparent 2.4px) 0 0/12px 12px,
+  linear-gradient(45deg, transparent 44%, var(--indigo) 45% 55%, transparent 56%) 0 0/12px 12px,
+  linear-gradient(-45deg, transparent 44%, var(--indigo) 45% 55%, transparent 56%) 0 0/12px 12px}
+
+/* header */
+.top{position:sticky; top:env(safe-area-inset-top, 0px); z-index:20; backdrop-filter:blur(14px) saturate(1.4); -webkit-backdrop-filter:blur(14px) saturate(1.4); background:color-mix(in srgb, var(--bg) 72%, transparent); border-bottom:1px solid color-mix(in srgb, var(--line) 60%, transparent)}
+.top .wrap{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:14px}
+.logo{display:flex; align-items:center; gap:10px; font:700 17px var(--display); color:var(--ink); text-decoration:none}
+.logo i{display:grid; place-items:center; width:32px; height:32px; border-radius:8px; background:var(--ink); color:var(--bg); font:800 14px var(--display); font-style:normal}
+.top nav{display:flex; gap:22px; font-size:14px}
+.top nav a{color:var(--muted); text-decoration:none; position:relative}
+.top nav a::after{content:""; position:absolute; left:0; right:0; bottom:-4px; height:2px; background:var(--madder); transform:scaleX(0); transform-origin:left; transition:transform .25s}
+.top nav a:hover{color:var(--ink)}
+.top nav a:hover::after{transform:scaleX(1)}
+
+/* hero */
+.hero{position:relative; overflow:hidden; isolation:isolate}
+#field{position:absolute; inset:0; width:100%; height:100%; z-index:-1}
+.hero::before{content:""; position:absolute; z-index:-2; inset:-20%; background:
+  radial-gradient(40% 50% at 78% 40%, var(--glow), transparent 70%),
+  radial-gradient(30% 40% at 12% 80%, color-mix(in srgb, var(--madder) 10%, transparent), transparent 70%)}
+.hero .wrap{display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center; padding-block:64px 80px}
+.hero .wrap > *{min-width:0}
+.status{display:inline-flex; align-items:center; gap:10px; padding:6px 12px 6px 10px; border:1px solid var(--line); border-radius:99px; background:var(--surface); font:500 13px var(--mono); color:var(--muted)}
+.status b{width:8px; height:8px; border-radius:50%; background:#2fa36b; box-shadow:0 0 0 0 rgba(47,163,107,.6); animation:ping 2.2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgba(47,163,107,0)}100%{box-shadow:0 0 0 0 rgba(47,163,107,0)}}
+.hero h1{font-size:clamp(46px, 7.2vw, 88px); font-weight:800; line-height:.96; letter-spacing:-.025em; margin-top:22px; perspective:600px}
+.hero h1 .w{display:inline-block; transform-origin:50% 100%}
+.hero h1 .acc{color:var(--madder); position:relative}
+.hero h1 .acc::after{content:""; position:absolute; left:2%; right:2%; bottom:.04em; height:.09em; background:var(--madder); border-radius:2px; opacity:.35}
+.lede{font-size:19px; color:var(--muted); max-width:36ch; margin:24px 0 0}
+.meta{display:flex; flex-direction:column; gap:4px; margin-top:22px; font-size:15px}
+.cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:30px}
+.btn{position:relative; display:inline-flex; align-items:center; gap:8px; font:600 15px var(--body); padding:13px 22px; border-radius:8px; text-decoration:none; border:1.5px solid var(--ink); color:var(--ink); background:transparent; cursor:pointer; transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s, background .2s}
+.btn.solid{background:var(--ink); color:var(--bg)}
+.btn.solid:hover{box-shadow:0 12px 28px -10px var(--shadow)}
+.btn:not(.solid):hover{background:var(--surface)}
+.btn .arr{transition:transform .2s}
+.btn:hover .arr{transform:translateX(3px)}
+
+/* 3D portrait */
+.stage{perspective:1100px; display:flex; justify-content:center}
+.portrait{position:relative; width:min(100%, 400px); transform-style:preserve-3d; transition:transform .5s cubic-bezier(.2,.8,.2,1); will-change:transform}
+.portrait .frame{position:relative; border-radius:22px; overflow:hidden; aspect-ratio:4/5; max-width:100%; background:var(--bg2); box-shadow:0 40px 80px -30px var(--shadow), 0 0 0 1px var(--line); transform:translateZ(0)}
+.portrait img{display:block; width:100%; height:100%; object-fit:cover; transform:scale(1.04); transition:transform .6s}
+.portrait:hover img{transform:scale(1.08)}
+.portrait .frame::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 55%, rgba(12,15,34,.55)); pointer-events:none}
+.glare{position:absolute; inset:0; border-radius:22px; pointer-events:none; background:radial-gradient(500px circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.28), transparent 45%); mix-blend-mode:soft-light; transform:translateZ(1px)}
+.portrait .cap{position:absolute; left:20px; right:20px; bottom:18px; color:#fff; transform:translateZ(40px); display:flex; justify-content:space-between; align-items:end; gap:10px}
+.portrait .cap strong{font:700 20px var(--display); display:block}
+.portrait .cap span{font:12px var(--mono); opacity:.85}
+.portrait .stripe{position:absolute; left:-10px; right:-10px; bottom:-22px; transform:translateZ(-30px); border-radius:4px; opacity:.9}
+.chip{position:absolute; display:flex; align-items:center; gap:8px; padding:9px 13px; border-radius:10px; background:var(--surface); border:1px solid var(--line); box-shadow:0 18px 36px -16px var(--shadow); font:500 13px var(--mono); color:var(--ink); white-space:nowrap}
+.chip i{width:8px; height:8px; border-radius:2px; background:var(--madder); font-style:normal}
+.chip.c1{top:9%; left:-14%; transform:translateZ(80px)}
+.chip.c2{top:38%; right:-16%; transform:translateZ(110px)}
+.chip.c2 i{background:var(--indigo)}
+.chip.c3{bottom:22%; left:-18%; transform:translateZ(60px)}
+.chip.score{top:-5%; right:-6%; transform:translateZ(130px); flex-direction:column; align-items:flex-start; gap:2px; padding:10px 14px}
+.chip.score b{font:800 22px var(--display); color:var(--madder); font-variant-numeric:tabular-nums}
+.chip.score span{font-size:11px; color:var(--muted)}
+.portrait .chip{animation:bob 6s ease-in-out infinite}
+.portrait .c2{animation-delay:-2s} .portrait .c3{animation-delay:-4s} .portrait .score{animation-delay:-1s}
+@keyframes bob{50%{translate:0 -8px}}
+
+/* stack marquee */
+.marquee{border-block:1px solid var(--line); background:var(--surface); overflow:hidden; padding-block:16px; -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)}
+.track{display:flex; gap:44px; width:max-content; animation:slide 38s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.track span{font:500 15px var(--mono); color:var(--muted); display:flex; align-items:center; gap:44px; white-space:nowrap}
+.track span::after{content:"✦"; color:var(--madder); font-size:11px}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+section{padding-block:96px}
+.sec-head{display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-bottom:40px}
+.sec-head h2{font-size:clamp(34px, 4.6vw, 52px); font-weight:800; letter-spacing:-.02em; line-height:1}
+.sec-head p{margin:12px 0 0; color:var(--muted); max-width:52ch}
+
+/* ask section */
+.ask{display:grid; grid-template-columns:.8fr 1.2fr; gap:48px; align-items:start}
+.ask > *{min-width:0}
+.console{background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 30px 60px -36px var(--shadow)}
+.console .bar{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line); font:500 12px var(--mono); color:var(--muted)}
+.console .bar .dots{display:flex; gap:6px; margin-right:6px}
+.console .bar .dots i{width:10px; height:10px; border-radius:50%; background:var(--line)}
+.console .bar .dots i:first-child{background:var(--madder)}
+.console .bar .k{margin-left:auto}
+.console form{display:flex; gap:8px; padding:16px; border-bottom:1px dashed var(--line)}
+.console input{flex:1; min-width:0; font:15px var(--mono); padding:11px 13px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink)}
+.console button[type=submit]{font:600 14px var(--mono); padding:0 16px; border-radius:8px; border:0; background:var(--madder); color:#fff; cursor:pointer; transition:transform .15s}
+.console button[type=submit]:hover{transform:translateY(-1px)}
+.chips{display:flex; flex-wrap:wrap; gap:6px; padding:12px 16px 0}
+.chips button{font:12px var(--mono); padding:5px 10px; border-radius:99px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; transition:all .15s}
+.chips button:hover{color:var(--ink); border-color:var(--ink); transform:translateY(-1px)}
+.hits{list-style:none; margin:0; padding:12px 16px 16px; display:flex; flex-direction:column; gap:8px; min-height:250px}
+.hit{display:grid; grid-template-columns:56px 1fr; gap:14px; padding:12px; border-radius:8px; transition:background .15s}
+.hit:hover{background:var(--bg)}
+.hit .score{font:500 13px var(--mono); color:var(--madder); font-variant-numeric:tabular-nums; padding-top:2px}
+.hit .score i{display:block; height:3px; background:var(--madder-soft); border-radius:2px; margin-top:6px; overflow:hidden}
+.hit .score i b{display:block; height:100%; background:var(--madder); transform-origin:left; animation:grow .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleX(.2)}}
+.hit strong{font-family:var(--display); font-size:16px}
+.hit p{margin:2px 0 0; font-size:14px; color:var(--muted)}
+.hit mark{background:var(--hl); color:inherit; padding:0 2px; border-radius:2px}
+.console .foot{padding:10px 16px; border-top:1px solid var(--line); font:12px var(--mono); color:var(--muted)}
+.how{display:flex; flex-direction:column; gap:18px; margin-top:28px}
+.how div{display:grid; grid-template-columns:36px 1fr; gap:12px; font-size:15px; color:var(--muted)}
+.how b{font:500 13px var(--mono); color:var(--madder); padding-top:2px}
+
+/* work */
+#work{background:var(--bg2)}
+.projects{display:grid; grid-template-columns:repeat(2, 1fr); gap:22px; perspective:1400px}
+.proj{position:relative; display:flex; flex-direction:column; gap:12px; padding:28px; background:var(--surface); border:1px solid var(--line); border-radius:16px; min-width:0; transform-style:preserve-3d; transition:transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s; overflow:hidden}
+.proj::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .3s; background:radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--madder) 12%, transparent), transparent 60%)}
+.proj:hover{box-shadow:0 30px 60px -30px var(--shadow); border-color:color-mix(in srgb, var(--madder) 35%, var(--line))}
+.proj:hover::before{opacity:1}
+.proj > *{position:relative}
+.proj.lead{grid-column:1/-1; display:grid; grid-template-columns:1.05fr 1fr; gap:32px}
+.proj.lead > *{min-width:0}
+.proj h3{font-size:24px; font-weight:700; letter-spacing:-.01em}
+.proj p{margin:0; color:var(--muted)}
+.kind{font:500 12px var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--madder)}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:6px}
+.tags span{font:12px var(--mono); padding:4px 9px; border-radius:5px; background:var(--bg); border:1px solid var(--line); color:var(--muted); transition:transform .2s, color .2s}
+.proj:hover .tags span{transform:translateZ(20px)}
+.proj:hover .tags span:hover{color:var(--ink)}
+.links{display:flex; gap:18px; flex-wrap:wrap; font-size:14px; font-weight:600}
+.links a{text-decoration:none}
+.links a:hover{text-decoration:underline}
+.note{font:12px var(--mono); color:var(--muted); display:flex; gap:8px; align-items:center}
+.note::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--indigo)}
+.pipe{font:13px/1.95 var(--mono); color:var(--muted); background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:18px; overflow-x:auto; margin:0; white-space:pre; transform:translateZ(30px)}
+.pipe b{color:var(--indigo); font-weight:500}
+.pipe .flow{color:var(--madder); display:inline-block; animation:flow 1.6s ease-in-out infinite}
+@keyframes flow{50%{transform:translateY(3px)}}
+
+.more{margin-top:34px; display:grid; grid-template-columns:repeat(3, 1fr); gap:0 28px}
+.more a{display:flex; justify-content:space-between; gap:10px; padding:13px 0; border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink); font-size:15px; min-width:0; transition:padding .2s}
+.more a span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.more a em{font:normal 12px var(--mono); color:var(--muted); flex-shrink:0; padding-top:2px}
+.more a:hover{padding-left:8px}
+.more a:hover span{color:var(--madder)}
+
+/* path timeline: chronological, so it is ordered */
+.path{list-style:none; margin:0; padding:0 0 0 30px; position:relative; display:flex; flex-direction:column; gap:14px}
+.path::before{content:""; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:var(--line)}
+.path .line{position:absolute; left:6px; top:8px; width:2px; height:calc(100% - 16px); background:var(--madder); transform-origin:top; transform:scaleY(var(--p, 1))}
+.path li{position:relative; display:grid; grid-template-columns:150px 1fr; gap:28px; padding:22px 24px; border-radius:12px; transition:background .25s, transform .25s}
+.path li:hover{background:var(--surface); transform:translateX(6px)}
+.path li::before{content:""; position:absolute; left:-30px; top:30px; width:14px; height:14px; border-radius:50%; background:var(--bg); border:2px solid var(--madder)}
+.path li > *{min-width:0}
+.when{font:500 13px var(--mono); color:var(--muted); padding-top:5px}
+.path h3{font-size:22px; font-weight:700}
+.org{color:var(--indigo); font-weight:600; margin:2px 0 8px}
+.path p{margin:0; color:var(--muted); max-width:62ch}
+
+/* toolkit */
+.skills{display:grid; grid-template-columns:repeat(4, 1fr); gap:20px}
+.skill{min-width:0; padding:24px; border:1px solid var(--line); border-radius:14px; background:var(--surface); transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s}
+.skill:hover{transform:translateY(-6px) rotateX(4deg); border-color:var(--ink)}
+.skill .n{font:800 34px var(--display); color:var(--madder); line-height:1}
+.skill h3{font:600 15px var(--body); margin:10px 0 14px}
+.skill ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:15px; color:var(--muted)}
+
+/* contact */
+#contact{background:var(--ink); color:var(--bg)}
+#contact .label{color:color-mix(in srgb, var(--bg) 65%, transparent)}
+.contact{display:grid; grid-template-columns:1.2fr 1fr; gap:48px; align-items:end}
+.contact > *{min-width:0}
+.contact h2{font-size:clamp(38px, 5.4vw, 66px); font-weight:800; line-height:1; letter-spacing:-.02em}
+.contact h2 em{font-style:normal; color:var(--madder)}
+.rows{display:flex; flex-direction:column; gap:12px}
+.row{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 18px; border:1px solid color-mix(in srgb, var(--bg) 20%, transparent); border-radius:10px; transition:background .2s, transform .2s}
+.row:hover{background:color-mix(in srgb, var(--bg) 8%, transparent); transform:translateX(-4px)}
+.row > div{min-width:0}
+.row .v{font:15px var(--mono); overflow-wrap:anywhere; user-select:all}
+.row a{color:var(--bg)}
+.row button{font:500 13px var(--mono); padding:7px 12px; border:1px solid color-mix(in srgb, var(--bg) 30%, transparent); border-radius:6px; background:transparent; color:var(--bg); cursor:pointer; flex-shrink:0}
+footer{background:var(--ink); color:color-mix(in srgb, var(--bg) 60%, transparent); font:13px var(--mono)}
+footer .wrap{padding-block:0 28px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+
+/* scroll rise: transform only, so content is always visible */
+.rise{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.rise.pre{transform:translateY(36px) rotateX(6deg)}
+
+@media (max-width: 900px){
+  .hero .wrap, .proj.lead, .contact, .ask{grid-template-columns:1fr; gap:40px}
+  .hero .wrap{padding-block:40px 64px}
+  .projects{grid-template-columns:1fr}
+  .more{grid-template-columns:1fr 1fr}
+  .skills{grid-template-columns:1fr 1fr}
+  .stage{padding-inline:12%}
+  .top nav{display:none}
+}
+@media (max-width: 560px){
+  .more, .skills{grid-template-columns:1fr}
+  .path li{grid-template-columns:1fr; gap:4px; padding:18px 12px}
+  .stage{padding-inline:10%}
+  .chip{font-size:11px; padding:7px 10px}
+  .chip.c1{left:-10%} .chip.c2{right:-12%} .chip.c3{left:-12%}
+  section{padding-block:72px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .hero h1 .w{animation:flip .9s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i) * 70ms)}
+  .hero .lede, .hero .meta, .hero .cta, .status{animation:up .8s cubic-bezier(.2,.8,.2,1) both}
+  .hero .lede{animation-delay:.35s} .hero .meta{animation-delay:.45s} .hero .cta{animation-delay:.55s}
+  .portrait{animation:enter 1.2s cubic-bezier(.2,.8,.2,1) both .15s}
+  .hit{animation:up .4s ease both}
+}
+@media (prefers-reduced-motion: reduce){
+  .track, .portrait .chip, .status b, .pipe .flow{animation:none}
+  .rise.pre{transform:none}
+  html{scroll-behavior:auto}
+}
+@keyframes flip{from{transform:rotateX(-70deg) translateY(.3em); opacity:.15}}
+@keyframes up{from{transform:translateY(14px); opacity:.3}}
+@keyframes enter{from{transform:rotateY(-18deg) rotateX(8deg) translateY(30px); opacity:.3}}
+</style>
+</head>
+<body>
+
+<div class="band" aria-hidden="true"></div>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top"><i>MA</i>Muhammad Ali</a>
+    <nav aria-label="Sections"><a href="#ask">Ask</a><a href="#work">Work</a><a href="#path">Path</a><a href="#skills">Toolkit</a><a href="#contact">Contact</a></nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <span class="status"><b></b>Open to AI / ML roles</span>
+      <h1 id="headline">I build AI that <span class="acc">reads</span> your documents.</h1>
+      <p class="lede">RAG systems, document and image understanding, and LLM agents, served through fast Python backends.</p>
+      <div class="meta">
+        <div><strong>BS Artificial Intelligence</strong> · Sindh Madressatul Islam University</div>
+        <div style="color:var(--muted)">AI Developer Intern at 360Xpert · Onsite AI &amp; Data Science course</div>
+      </div>
+      <div class="cta">
+        <a class="btn solid" href="#work" data-magnet>See my work <span class="arr">→</span></a>
+        <a class="btn" href="https://github.com/Muhammad773-bit" target="_blank" rel="noopener" data-magnet>GitHub <span class="arr">↗</span></a>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="portrait" id="portrait">
+        <div class="frame"><img src="assets/muhammad-ali.webp" alt="Muhammad Ali working on his laptop" width="800" height="1000"></div>
+        <div class="glare"></div>
+        <div class="cap"><div><strong>Muhammad Ali</strong><span>AI Developer · Karachi</span></div></div>
+        <div class="band stripe" aria-hidden="true"></div>
+        <div class="chip c1"><i></i>RAG · Chroma</div>
+        <div class="chip c2"><i></i>Vision-language models</div>
+        <div class="chip c3"><i></i>LLM agents · FastAPI</div>
+        <div class="chip score"><b>0.92</b><span>similarity: AI ↔ Ali</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="marquee" aria-label="Technologies I use">
+  <div class="track" id="track"></div>
+</div>
+
+<section id="ask">
+  <div class="wrap ask">
+    <div class="rise">
+      <div class="label">Try it</div>
+      <h2 style="font-size:clamp(34px,4.6vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1;margin-top:10px">Ask my portfolio a question.</h2>
+      <p style="color:var(--muted);margin:16px 0 0;max-width:42ch">This box runs a small retrieval engine over my projects, the same idea behind the RAG agents I build. Type anything and it ranks my work by relevance.</p>
+      <div class="how">
+        <div><b>tok</b><span>Your question is split into terms.</span></div>
+        <div><b>idf</b><span>Each project is scored by TF-IDF: rare matching words count more.</span></div>
+        <div><b>k=3</b><span>The three best matches are returned with their scores and highlights.</span></div>
+      </div>
+    </div>
+    <div class="console rise" aria-label="Search my projects">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span>portfolio_rag.py<span class="k">top-k = 3</span></div>
+      <form id="qform" autocomplete="off">
+        <label for="q" style="position:absolute;left:-9999px">Ask about my work</label>
+        <input id="q" name="q" value="document parsing with local models" spellcheck="false">
+        <button type="submit">retrieve</button>
+      </form>
+      <div class="chips" id="chips"></div>
+      <ol class="hits" id="hits" aria-live="polite"></ol>
+      <div class="foot" id="foot">Searching my projects…</div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head rise"><div><div class="label">Selected work</div><h2 style="margin-top:10px">Things I've built.</h2></div><p>From my bachelors, my internship, and real client work.</p></div>
+
+    <div class="projects">
+      <article class="proj lead rise" data-tilt="4">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="kind">Retrieval-augmented generation</div>
+          <h3>Multi-Document RAG Agent</h3>
+          <p>Ask questions across a folder of PDFs, Word files and PowerPoint decks. It loads each format, splits the text into chunks, embeds them with MiniLM, stores them in Chroma and answers from the passages it retrieves. I built several versions, from a CLI tool to a multimodal one that also reads images.</p>
+          <div class="tags"><span>LangChain</span><span>ChromaDB</span><span>sentence-transformers</span><span>Hugging Face</span><span>Python</span></div>
+          <div class="links"><a href="https://github.com/Muhammad773-bit/Multi-Document-Retrieval-Agent" target="_blank" rel="noopener">Repository ↗</a><a href="https://github.com/Muhammad773-bit/RAG-project" target="_blank" rel="noopener">Earlier RAG project ↗</a></div>
+        </div>
+<pre class="pipe" aria-label="Pipeline">
+ documents/  <b>PDF · DOCX · PPTX</b>
+     <span class="flow">↓</span>
+ loader_router      pick a loader per format
+     <span class="flow">↓</span>
+ text_splitter      chunk + overlap
+     <span class="flow">↓</span>
+ embeddings         <b>all-MiniLM-L6-v2</b>
+     <span class="flow">↓</span>
+ vector store       <b>Chroma</b>, persisted
+     <span class="flow">↓</span>
+ retriever → chain  grounded answer
+</pre>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">Vision · Document AI · Internship</div>
+        <h3>Image &amp; Document Understanding</h3>
+        <p>Internship work that turns images, charts and scanned pages into structured text. I compared Tesseract OCR, BLIP, Florence-2, Moondream and Qwen2.5-VL 7B running locally as a quantised GGUF model, and built a parser that picks the right strategy for each input.</p>
+        <div class="tags"><span>Qwen2.5-VL</span><span>Florence-2</span><span>llama.cpp</span><span>Tesseract</span><span>OCR</span></div>
+        <div class="note">The code belongs to 360Xpert. Demo on request.</div>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">LLM agent · Tool use</div>
+        <h3>CSV Analyst Agent</h3>
+        <p>Upload a CSV and ask questions in plain English. The agent decides which analysis tool to run and explains the result. I tested it on an HR attrition dataset with questions like "which department has the highest attrition rate?"</p>
+        <div class="tags"><span>LangChain agents</span><span>Pandas</span><span>Python</span></div>
+        <div class="links"><a href="https://github.com/Muhammad773-bit/CSV_Analyst-Agent" target="_blank" rel="noopener">Repository ↗</a></div>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">Automation · Conversational AI</div>
+        <h3>WhatsApp AI Assistant for SaverGuys</h3>
+        <p>A WhatsApp assistant built for a real business in n8n. It answers customer questions with RAG over the company's own information. It went through several versions (v2.0 to v3.7), each one fixing problems found in real use.</p>
+        <div class="tags"><span>n8n</span><span>RAG</span><span>WhatsApp API</span><span>Workflows</span></div>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">Knowledge representation &amp; reasoning</div>
+        <h3>Automated Product Design</h3>
+        <p>A hybrid AI system for the KRR course. It combines a knowledge base and rule-based reasoning with machine learning to suggest product designs, all behind a Streamlit interface. Comes with a full written report and presentation.</p>
+        <div class="tags"><span>Knowledge graphs</span><span>Reasoning</span><span>Streamlit</span></div>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">Computer vision</div>
+        <h3>Potato Blight Detection</h3>
+        <p>A group project (Group A3) that classifies potato leaf images as healthy, early blight or late blight, so farmers can catch the disease early. I co-authored the final report.</p>
+        <div class="tags"><span>CNN</span><span>Image classification</span><span>Deep learning</span></div>
+      </article>
+
+      <article class="proj rise" data-tilt="7">
+        <div class="kind">Software engineering</div>
+        <h3>Design Patterns in Python</h3>
+        <p>Small, complete apps that each apply one classic pattern: an inventory system with Facade, ride booking with Factory Method, economy and luxury booking with Abstract Factory, and notifications with Decorator.</p>
+        <div class="tags"><span>OOP</span><span>Facade</span><span>Factory</span><span>Decorator</span></div>
+        <div class="links"><a href="https://github.com/Muhammad773-bit/Online-inventory-System-using-fecade-designpattern" target="_blank" rel="noopener">Facade ↗</a><a href="https://github.com/Muhammad773-bit/ride-booking-factory-method" target="_blank" rel="noopener">Factory ↗</a><a href="https://github.com/Muhammad773-bit/Notification_Decorator_" target="_blank" rel="noopener">Decorator ↗</a></div>
+      </article>
+    </div>
+
+    <div class="more rise" aria-label="More repositories">
+      <a href="https://github.com/Muhammad773-bit/restopilot-ai" target="_blank" rel="noopener"><span>RestoPilot AI</span><em>2026</em></a>
+      <a href="https://github.com/Muhammad773-bit/autoiq-crm" target="_blank" rel="noopener"><span>AutoIQ CRM</span><em>2026</em></a>
+      <a href="https://github.com/Muhammad773-bit/HACKTHON-PROJECT" target="_blank" rel="noopener"><span>Hackathon project</span><em>notebook</em></a>
+      <a href="https://github.com/Muhammad773-bit/fastapi-demo-products-get-post1" target="_blank" rel="noopener"><span>FastAPI products API</span><em>FastAPI</em></a>
+      <a href="https://github.com/Muhammad773-bit/PC_BUILDER_PRJOJECT" target="_blank" rel="noopener"><span>PC builder</span><em>Python</em></a>
+      <a href="https://github.com/Muhammad773-bit/Bank-system-project-" target="_blank" rel="noopener"><span>Bank account system</span><em>Python</em></a>
+      <a href="https://github.com/Muhammad773-bit/Ai-and-data-science-assignments-" target="_blank" rel="noopener"><span>AI &amp; data science assignments</span><em>course</em></a>
+      <a href="https://github.com/Muhammad773-bit/pandas_data-visualization-assignment-" target="_blank" rel="noopener"><span>COVID-19 data analysis</span><em>Pandas</em></a>
+      <a href="https://github.com/Muhammad773-bit" target="_blank" rel="noopener"><span>All repositories</span><em>GitHub ↗</em></a>
+    </div>
+  </div>
+</section>
+
+<section id="path">
+  <div class="wrap">
+    <div class="sec-head rise"><div><div class="label">Most recent first</div><h2 style="margin-top:10px">Path so far.</h2></div></div>
+    <ol class="path" id="pathlist">
+      <span class="line" aria-hidden="true"></span>
+      <li class="rise">
+        <div class="when">Internship</div>
+        <div>
+          <h3>AI Developer Intern</h3>
+          <div class="org">360Xpert</div>
+          <p>Built document and image understanding pipelines with local vision-language models, multi-document RAG agents, and FastAPI services that serve AI models in production, with parser strategies for different input types. I can walk through this work on request; the code belongs to the company.</p>
+        </div>
+      </li>
+      <li class="rise">
+        <div class="when">Onsite course</div>
+        <div>
+          <h3>Artificial Intelligence &amp; Data Science</h3>
+          <p>Hands-on training in Python, data analysis with Pandas and NumPy, visualisation, and machine learning with scikit-learn, TensorFlow and PyTorch. Assignments and the hackathon project are on GitHub.</p>
+        </div>
+      </li>
+      <li class="rise">
+        <div class="when">Training</div>
+        <div>
+          <h3>Software Quality Assurance</h3>
+          <p>Automation testing with Selenium, Playwright and Postman.</p>
+        </div>
+      </li>
+      <li class="rise">
+        <div class="when">Bachelors</div>
+        <div>
+          <h3>BS Artificial Intelligence</h3>
+          <div class="org">Sindh Madressatul Islam University, Karachi</div>
+          <p>Coursework in machine learning, advanced AI, knowledge representation and reasoning, computer vision and software design patterns, with a project for each.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="skills" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head rise"><div><div class="label">What I work with</div><h2 style="margin-top:10px">Toolkit.</h2></div></div>
+    <div class="skills">
+      <div class="skill rise"><div class="n">01</div><h3>Generative AI</h3><ul><li>LangChain · CrewAI</li><li>RAG pipelines</li><li>Chroma vector DB</li><li>Ollama · llama.cpp</li><li>Vision-language models</li></ul></div>
+      <div class="skill rise"><div class="n">02</div><h3>Machine learning</h3><ul><li>scikit-learn</li><li>TensorFlow · Keras</li><li>PyTorch</li><li>MLflow</li><li>NumPy · Pandas</li></ul></div>
+      <div class="skill rise"><div class="n">03</div><h3>Backend</h3><ul><li>FastAPI · Django</li><li>Node.js · Express</li><li>PostgreSQL · MySQL</li><li>MongoDB · Neo4j</li><li>Docker</li></ul></div>
+      <div class="skill rise"><div class="n">04</div><h3>Tools &amp; testing</h3><ul><li>Git · GitHub</li><li>n8n automation</li><li>Streamlit</li><li>Selenium · Playwright</li><li>Postman · Power BI</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact">
+    <div class="rise">
+      <div class="label" style="margin-bottom:14px">Open to AI / ML roles and internships</div>
+      <h2>Let's build something that <em>reads, reasons</em> and answers.</h2>
+    </div>
+    <div class="rows rise">
+      <div class="row"><div><div class="label">Email</div><div class="v" id="email">muhammadalimurad92@gmail.com</div></div><button type="button" data-copy="email">Copy</button></div>
+      <div class="row"><div><div class="label">GitHub</div><div class="v"><a href="https://github.com/Muhammad773-bit" target="_blank" rel="noopener">github.com/Muhammad773-bit</a></div></div></div>
+      <div class="row"><div><div class="label">Bluesky</div><div class="v"><a href="https://bsky.app/profile/ali.ai.dev" target="_blank" rel="noopener">@ali.ai.dev</a></div></div></div>
+    </div>
+  </div>
+</section>
+<footer><div class="wrap"><span>© 2026 Muhammad Ali</span><span>Karachi, Pakistan</span></div></footer>
+<div class="band" aria-hidden="true"></div>
+
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fine = matchMedia("(pointer: fine)").matches;
+
+/* headline words */
+(() => {
+  const h = document.getElementById("headline"); let i = 0;
+  h.childNodes.forEach(n => {
+    if (n.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(t => {
+        if (!t) return;
+        if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
+        const s = document.createElement("span"); s.className = "w"; s.style.setProperty("--i", i++); s.textContent = t; frag.appendChild(s);
+      });
+      h.replaceChild(frag, n);
+    } else { n.classList.add("w"); n.style.setProperty("--i", i++); }
+  });
+})();
+
+/* stack marquee */
+(() => {
+  const items = ["Python","FastAPI","LangChain","ChromaDB","Hugging Face","PyTorch","TensorFlow","scikit-learn","Qwen2.5-VL","llama.cpp","Ollama","n8n","Docker","PostgreSQL","Neo4j","Streamlit","Pandas","CrewAI"];
+  const t = document.getElementById("track");
+  t.innerHTML = [...items, ...items].map(x => `<span>${x}</span>`).join("");
+})();
+
+/* 3D tilt: portrait follows the cursor anywhere in the hero; cards tilt on their own hover */
+(() => {
+  if (reduce || !fine) return;
+  const p = document.getElementById("portrait"), hero = document.querySelector(".hero"), glare = p.querySelector(".glare");
+  hero.addEventListener("pointermove", e => {
+    const r = p.getBoundingClientRect();
+    const x = (e.clientX - (r.left + r.width/2)) / (innerWidth/2), y = (e.clientY - (r.top + r.height/2)) / (innerHeight/2);
+    p.style.transform = `rotateY(${x*14}deg) rotateX(${-y*12}deg)`;
+    glare.style.setProperty("--gx", ((e.clientX - r.left)/r.width*100) + "%");
+    glare.style.setProperty("--gy", ((e.clientY - r.top)/r.height*100) + "%");
+  });
+  hero.addEventListener("pointerleave", () => { p.style.transform = ""; });
+
+  document.querySelectorAll("[data-tilt]").forEach(el => {
+    const max = +el.dataset.tilt;
+    el.addEventListener("pointermove", e => {
+      const r = el.getBoundingClientRect(), x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
+      el.style.transform = `rotateY(${(x-.5)*max}deg) rotateX(${(.5-y)*max}deg) translateZ(0)`;
+      el.style.setProperty("--mx", x*100 + "%"); el.style.setProperty("--my", y*100 + "%");
+    });
+    el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+  });
+
+  document.querySelectorAll("[data-magnet]").forEach(el => {
+    el.addEventListener("pointermove", e => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - r.left - r.width/2)*.25}px, ${(e.clientY - r.top - r.height/2)*.35}px)`;
+    });
+    el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+  });
+})();
+
+/* embedding-space field: points drift and link to near neighbours; the cursor pulls them */
+(() => {
+  const c = document.getElementById("field"), ctx = c.getContext("2d"), hero = c.parentElement;
+  let W, H, pts = [], mouse = {x:-999, y:-999}, raf;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function size(){
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = hero.clientWidth; H = hero.clientHeight; c.width = W*d; c.height = H*d; ctx.setTransform(d,0,0,d,0,0);
+    const n = Math.round(Math.min(90, W*H/14000));
+    pts = Array.from({length:n}, () => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, r:Math.random()*1.6+.8, red:Math.random()<.12}));
+  }
+  function draw(){
+    const ind = css("--indigo"), mad = css("--madder");
+    ctx.clearRect(0,0,W,H);
+    for (const p of pts){
+      p.x += p.vx; p.y += p.vy;
+      if (p.x<0||p.x>W) p.vx*=-1; if (p.y<0||p.y>H) p.vy*=-1;
+      const dx = mouse.x-p.x, dy = mouse.y-p.y, d = Math.hypot(dx,dy);
+      if (d<160){ p.x += dx*.006; p.y += dy*.006; }
+    }
+    ctx.lineWidth = 1;
+    for (let i=0;i<pts.length;i++) for (let j=i+1;j<pts.length;j++){
+      const a=pts[i], b=pts[j], d=Math.hypot(a.x-b.x,a.y-b.y);
+      if (d<110){ ctx.globalAlpha=(1-d/110)*.22; ctx.strokeStyle=ind; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+    }
+    for (const p of pts){ ctx.globalAlpha=p.red?.8:.45; ctx.fillStyle=p.red?mad:ind; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill(); }
+    ctx.globalAlpha=1;
+    if (!reduce) raf = requestAnimationFrame(draw);
+  }
+  hero.addEventListener("pointermove", e => { const r = hero.getBoundingClientRect(); mouse.x = e.clientX-r.left; mouse.y = e.clientY-r.top; });
+  hero.addEventListener("pointerleave", () => { mouse.x = mouse.y = -999; });
+  addEventListener("resize", () => { cancelAnimationFrame(raf); size(); draw(); });
+  size(); draw();
+})();
+
+/* scroll rise (transform only) + timeline progress */
+(() => {
+  if (reduce || !("IntersectionObserver" in window)) return;
+  const els = [...document.querySelectorAll(".rise")].filter(el => el.getBoundingClientRect().top > innerHeight);
+  els.forEach(el => el.classList.add("pre"));
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.remove("pre"); io.unobserve(e.target); } }), {rootMargin:"0px 0px -8% 0px"});
+  els.forEach(el => io.observe(el));
+  const list = document.getElementById("pathlist");
+  const upd = () => { const r = list.getBoundingClientRect(); const p = Math.min(1, Math.max(0, (innerHeight*.75 - r.top) / r.height)); list.style.setProperty("--p", p.toFixed(3)); };
+  addEventListener("scroll", upd, {passive:true}); upd();
+})();
+
+/* ask my portfolio: TF-IDF retrieval over projects */
+const DOCS = [
+  {t:"Multi-Document RAG Agent", a:"#work", d:"Question answering over PDF, DOCX and PPTX documents with LangChain, Chroma vector store and MiniLM embeddings.", k:"rag retrieval documents pdf docx pptx langchain chroma vector embeddings llm question answering search agent"},
+  {t:"Image & Document Understanding", a:"#work", d:"Local document parsing with Qwen2.5-VL, Florence-2, BLIP, Moondream and Tesseract OCR, run through llama.cpp.", k:"vision image ocr document parsing local models qwen florence blip moondream tesseract gguf llama.cpp multimodal internship 360xpert work experience scanned charts"},
+  {t:"AI Developer Intern, 360Xpert", a:"#path", d:"Internship: document AI pipelines, RAG agents and FastAPI services for AI models.", k:"internship experience work job intern 360xpert company fastapi document ai rag"},
+  {t:"CSV Analyst Agent", a:"#work", d:"An agent that chooses analysis tools to answer plain-English questions about a CSV file.", k:"agent agents tools csv data analysis pandas llm hr attrition questions langchain"},
+  {t:"Automated Product Design (KRR)", a:"#work", d:"Hybrid AI that combines a knowledge base and rule-based reasoning with ML, behind a Streamlit app.", k:"knowledge representation reasoning krr hybrid rules ontology product design streamlit"},
+  {t:"WhatsApp AI Assistant (n8n)", a:"#work", d:"A RAG assistant on WhatsApp for a real business, built as n8n workflows.", k:"whatsapp n8n automation chatbot rag workflow customer business assistant client"},
+  {t:"Potato Blight Detection", a:"#work", d:"A CNN that classifies potato leaf disease from photos. Group project.", k:"computer vision cnn deep learning image classification potato blight agriculture"},
+  {t:"FastAPI backends", a:"#work", d:"A products API, plus async services that serve AI models, built during my internship.", k:"fastapi backend api rest python async server deploy docker"},
+  {t:"Design pattern projects", a:"#work", d:"Facade, Factory, Abstract Factory and Decorator patterns in small Python apps.", k:"design patterns facade factory decorator abstract oop software python"},
+  {t:"AI & Data Science course", a:"#path", d:"Onsite training: Pandas, visualisation and ML, plus assignments and a hackathon project.", k:"data science pandas numpy visualization machine learning course hackathon covid analysis notebook"},
+  {t:"BS Artificial Intelligence, SMIU", a:"#path", d:"Bachelors at Sindh Madressatul Islam University, Karachi.", k:"education degree university smiu bachelors student karachi"}
+];
+const CHIPS = ["document parsing with local models","rag over pdfs","agents that use tools","internship experience","computer vision","education"];
+const tok = s => s.toLowerCase().match(/[a-z0-9.+]+/g) || [];
+const df = {}; DOCS.forEach(d => new Set(tok(d.t+" "+d.d+" "+d.k)).forEach(w => df[w]=(df[w]||0)+1));
+const N = DOCS.length;
+function score(q, d){
+  const words = tok(d.t+" "+d.d+" "+d.k); let s = 0;
+  tok(q).forEach(w => {
+    const tf = words.filter(x => x===w || (w.length>3 && x.startsWith(w.slice(0,-1)))).length;
+    if (tf) s += (1+Math.log(tf)) * Math.log(1+N/(df[w]||1));
+  });
+  return s;
+}
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function highlight(text, q){
+  const qs = tok(q).filter(w => w.length>2);
+  return esc(text).replace(/[A-Za-z0-9.+-]+/g, m => qs.some(w => m.toLowerCase().startsWith(w.slice(0, Math.max(3, w.length-1)))) ? "<mark>"+m+"</mark>" : m);
+}
+function run(q){
+  const top = DOCS.map(d => ({d, s:score(q,d)})).filter(r=>r.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
+  const max = top[0] ? top[0].s : 1;
+  document.getElementById("hits").innerHTML = top.length ? top.map((r,i) => {
+    const sim = (0.45 + 0.5*r.s/max).toFixed(2);
+    return `<li class="hit" style="animation-delay:${i*60}ms"><div class="score">${sim}<i><b style="width:${sim*100}%"></b></i></div><div><strong><a href="${r.d.a}" style="color:inherit;text-decoration:none">${esc(r.d.t)}</a></strong><p>${highlight(r.d.d, q)}</p></div></li>`;
+  }).join("") : `<li class="hit"><div class="score">0.00</div><div><strong>No close match</strong><p>Try "rag", "vision", "agents" or "fastapi".</p></div></li>`;
+  document.getElementById("foot").textContent = `${top.length} of ${N} items retrieved · TF-IDF scores, normalised`;
+}
+const chips = document.getElementById("chips");
+CHIPS.forEach(c => { const b = document.createElement("button"); b.type="button"; b.textContent=c; b.onclick=()=>{document.getElementById("q").value=c; run(c)}; chips.appendChild(b); });
+document.getElementById("qform").addEventListener("submit", e => { e.preventDefault(); run(document.getElementById("q").value); });
+document.getElementById("q").addEventListener("input", e => run(e.target.value));
+run(document.getElementById("q").value);
+
+document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+  const el = document.getElementById(b.dataset.copy), txt = el.textContent;
+  const done = () => { b.textContent = "Copied"; setTimeout(()=>b.textContent="Copy", 1600); };
+  try { navigator.clipboard.writeText(txt).then(done, () => getSelection().selectAllChildren(el)); }
+  catch(e){ getSelection().selectAllChildren(el); }
+}));
+</script>
+</body>
+</html>
